@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS To-Do List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 10px;
+            background: #f1f1f1;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 5px;
+        }
+        ul li.completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+        .edit-mode input {
+            margin-right: 10px;
+            flex-grow: 1;
+        }
+        .btn-edit {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body ng-app="todoApp" ng-controller="TodoController">
+    <div class="container">
+        <h1>To-Do List</h1>
+        <form ng-submit="addTask()">
+            <input type="text" ng-model="newTask" placeholder="Enter a new task" required class="form-control">
+            <button type="submit" style="margin-top: 10px;" class="btn btn-primary w-100">Add Task</button>
+        </form>
+        <ul>
+            <li ng-repeat="task in tasks" ng-class="{completed: task.done}">
+                <div ng-if="!task.editMode" style="flex-grow: 1;" ng-click="toggleTask(task)">
+                    {{ task.name }}
+                </div>
+                <div ng-if="task.editMode" class="edit-mode">
+                    <input type="text" ng-model="task.name" class="form-control">
+                </div>
+                <button ng-if="!task.editMode" class="btn btn-edit" ng-click="editTask(task)">Edit</button>
+                <button ng-if="task.editMode" class="btn btn-primary" ng-click="saveTask(task)">Save</button>
+                <button class="btn btn-delete" ng-click="removeTask($index)">Delete</button>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        var app = angular.module('todoApp', []);
+        app.controller('TodoController', function ($scope) {
+            $scope.tasks = [];
+
+            // Add a new task
+            $scope.addTask = function () {
+                if ($scope.newTask) {
+                    $scope.tasks.push({ name: $scope.newTask, done: false, editMode: false });
+                    $scope.newTask = '';
+                }
+            };
+
+            // Toggle task completion
+            $scope.toggleTask = function (task) {
+                task.done = !task.done;
+            };
+
+            // Edit a task
+            $scope.editTask = function (task) {
+                task.editMode = true;
+            };
+
+            // Save the edited task
+            $scope.saveTask = function (task) {
+                task.editMode = false;
+            };
+
+            // Remove a task
+            $scope.removeTask = function (index) {
+                $scope.tasks.splice(index, 1);
+            };
+        });
+    </script>
+</body>
+</html>
